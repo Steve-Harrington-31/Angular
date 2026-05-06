@@ -1,0 +1,81 @@
+<div class="dashboard">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="brand">🛒 InvenTrack</div>
+    <ul class="menu">
+      <li class="active">📦 Inventory</li>
+      <li>📊 Analytics</li>
+      <li>🚚 Orders</li>
+      <li>⚙️ Settings</li>
+    </ul>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="header">
+      <div>
+        <h1>Smart Inventory Dashboard</h1>
+        <p>Real-time stock management system</p>
+      </div>
+      <div class="admin-badge">👤 Admin</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card" *ngFor="let stat of stats" [ngStyle]="{'border-top': '4px solid ' + stat.color}">
+        <p class="stat-label">{{ stat.label }}</p>
+        <h2 [ngStyle]="{'color': stat.color}">{{ stat.value }}</h2>
+      </div>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="controls">
+      <input [(ngModel)]="searchText" placeholder="🔍 Search product..." class="search" />
+      <select [(ngModel)]="filterStatus" class="filter">
+        <option>All</option>
+        <option>In Stock</option>
+        <option>Low Stock</option>
+        <option>Out of Stock</option>
+      </select>
+    </div>
+
+    <!-- No results -->
+    <div class="no-result" *ngIf="filteredInventory.length === 0">
+      ⚠️ No products found!
+    </div>
+
+    <!-- Table -->
+    <table *ngIf="filteredInventory.length > 0">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Stock</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredInventory"
+            [ngClass]="{'low': item.status === 'Low Stock', 'out': item.status === 'Out of Stock'}">
+          <td>{{ item.name }}</td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.stock }}</td>
+          <td>${{ item.price }}</td>
+          <td>
+            <span class="badge" [ngStyle]="{'background': getStatusColor(item.status)}">
+              {{ item.status }}
+            </span>
+          </td>
+          <td>
+            <button class="order-btn" (click)="confirmOrder(item.name)"
+                    [disabled]="item.status === 'Out of Stock'">
+              Order
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
